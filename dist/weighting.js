@@ -107,4 +107,17 @@
  new ResizeObserver(()=>{const next=svg.parentElement.clientWidth<580;if(next!==mobile)diagram();}).observe(svg.parentElement);
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.querySelector('#animation-caption').textContent='Use Next subgoal to explore without animation, or choose Play.';
  render();
+ // Start when the reader reaches the animation, so it has not finished offscreen.
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  let interacted=false;
+  document.querySelector('#weighting-demo').addEventListener('pointerdown',()=>{interacted=true;},{once:true});
+  document.querySelector('#weighting-demo').addEventListener('keydown',()=>{interacted=true;},{once:true});
+  const autoplay=new IntersectionObserver(entries=>{
+   if(entries.some(entry=>entry.isIntersecting)){
+    autoplay.disconnect();
+    if(!interacted&&!running)play.click();
+   }
+  },{threshold:0.2});
+  autoplay.observe(svg);
+ }
 })();
