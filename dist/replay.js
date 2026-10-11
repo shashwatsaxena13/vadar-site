@@ -2,8 +2,6 @@
  const demo=document.querySelector('.replay-demo');if(!demo)return;
  const button=document.querySelector('#replay-toggle'),critic=demo.querySelector('.replay-critic');
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
- const predictions=[[.82,.64,.37,.21],[.76,.59,.42,.28],[.88,.71,.53,.34],[.91,.78,.56,.40],[.68,.51,.29,.16],[.84,.66,.47,.32],[.79,.62,.44,.25],[.93,.81,.61,.46]];
- const targets=[[.90,.70,.45,.30],[.82,.66,.49,.33],[.91,.77,.59,.41],[.94,.82,.62,.46],[.75,.57,.35,.22],[.90,.73,.53,.38],[.85,.67,.51,.31],[.96,.87,.68,.52]];
  let paused=reduced.matches,visible=false,phase=0,sample=0,elapsed=0,last=0;
  const interval=2400;
  const track=demo.querySelector('.replay-track');track.append(track.querySelector('.replay-group').cloneNode(true));const cards=[...track.querySelectorAll('.transition-card')];
@@ -19,7 +17,6 @@
  columns.forEach(c=>c.querySelector('.branch-wire').style.visibility='hidden');
  const ns='http://www.w3.org/2000/svg';
  const flow=document.createElementNS(ns,'svg');flow.classList.add('critic-flow');flow.setAttribute('aria-hidden','true');critic.prepend(flow);
- const number=(x)=>x.toFixed(2);
  const tex=(selector,value)=>{const el=demo.querySelector(selector);el.innerHTML=mathHTML(value);};
  function positionRibbon(animate=true){
   const view=demo.querySelector('.replay-window');
@@ -29,19 +26,15 @@
   cards.forEach((c,i)=>c.classList.toggle('sampled-card',i===sample+8));
  }
  function refreshSample(){
-  const j=sample+1;
-  document.querySelector('#sample-name').textContent=`Sampled transition ${String(j).padStart(2,'0')}`;
-  tex('#sample-tuple',`(s_{${j}},a_{${j}},\\mathbf{r}_{${j}},s'_{${j}})`);
-  tex('#critic-function',`Q_{\\phi}(s_{${j}},a_{${j}},\\cdot)`);
+  document.querySelector('#sample-name').textContent='One sampled transition';
+  tex('#sample-tuple',"(s,a,\\mathbf{r},s')");
+  tex('#critic-function','Q_{\\phi}(s,a,\\cdot)');
   columns.forEach((c,i)=>{
-   c.querySelector('.prediction-formula').innerHTML=mathHTML(`Q_{${i+1}}(s_{${j}},a_{${j}})`);
-   c.querySelector('.prediction-number').innerHTML=mathHTML(number(predictions[sample][i]));
-   c.querySelector('.target-value b').innerHTML=mathHTML(`y_{${i+1}}=${number(targets[sample][i])}`);
-   const loss=(predictions[sample][i]-targets[sample][i])**2;
-   c.querySelector('.prediction-loss').innerHTML=mathHTML(`\\mathcal{L}_{${i+1}}=(Q_{${i+1}}-y_{${i+1}})^2`)+`<span class="loss-value">${mathHTML('='+loss.toFixed(4))}</span>`;
+   c.querySelector('.prediction-formula').innerHTML=mathHTML(`Q_{${i+1}}(s,a)`);
+   c.querySelector('.target-value b').innerHTML=mathHTML(`y_{${i+1}}`);
+   c.querySelector('.prediction-loss').innerHTML=mathHTML(`\\mathcal{L}_{${i+1}}=(Q_{${i+1}}-y_{${i+1}})^2`);
   });
-  const total=predictions[sample].reduce((acc,v,i)=>acc+(v-targets[sample][i])**2,0);
-  demo.querySelector('.critic-feedback [data-tex]').innerHTML=mathHTML(`\\mathcal{L}_{\\mathrm{critic}}=\\sum_{g=1}^{4}\\mathcal{L}_g=${total.toFixed(4)}`);
+  demo.querySelector('.critic-feedback [data-tex]').innerHTML=mathHTML('\\mathcal{L}_{\\mathrm{critic}}=\\sum_g\\mathcal{L}_g');
   positionRibbon(sample!==0);drawFlow();
  }
  function drawFlow(){
@@ -78,8 +71,8 @@
   demo.dataset.phase=phase;demo.dataset.sample=sample+1;
   demo.querySelectorAll('[data-step]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.step===phase)));
   const descriptions=[
-   `Transition ${sample+1} supplies one state-action pair to the critic.`,
-   `For transition ${sample+1}, the critic predicts all four subgoal returns in one forward pass.`,
+   'One sampled transition supplies the state and action to the critic.',
+   'For the same state and action, the critic predicts a return for every subgoal.',
    'Each subgoal prediction is compared with its own temporal-difference target, producing four losses.',
    'The sum of the four losses updates the shared critic. The next sampled transition produces another set of four predictions.'
   ];
@@ -89,7 +82,7 @@
   demo.classList.toggle('replay-paused',paused||!visible||document.hidden);
   button.setAttribute('aria-pressed',String(paused));button.textContent=paused?'Play animation':'Pause animation';
  }
- function advanceSample(){sample=(sample+1)%predictions.length;phase=reduced.matches?3:0;elapsed=0;refreshSample();render();}
+ function advanceSample(){sample=(sample+1)%8;phase=reduced.matches?3:0;elapsed=0;refreshSample();render();}
  next.addEventListener('click',()=>{advanceSample();});
  button.addEventListener('click',()=>{paused=!paused;sync();});
  demo.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>{phase=+b.dataset.step;elapsed=0;paused=true;render();sync();}));
