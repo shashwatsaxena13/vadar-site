@@ -14,28 +14,28 @@
  function diagram(){
   mobile=svg.parentElement.clientWidth<580;
   const active=selected();
-  const W=mobile?450:960,H=mobile?490:430;
+  const W=mobile?450:960,H=mobile?500:510;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
   let html='<title id="animation-title">All-subgoal supervision and weighted policy extraction</title><desc id="animation-description">Blue paths supervise all four values. Red paths carry only selected values into the policy objective. Zero-weight values still receive critic supervision.</desc>';
-  const input=mobile?{x:225,y:43,w:210,h:54}:{x:100,y:214,w:150,h:64};
-  const sum=mobile?{x:225,y:345,w:178,h:54}:{x:700,y:214,w:155,h:62};
-  const policy=mobile?{x:225,y:449,w:178,h:50}:{x:880,y:214,w:130,h:62};
+  const input={x:W/2,y:42,w:mobile?210:230,h:58};
+  const sum={x:W/2,y:mobile?346:365,w:mobile?190:230,h:58};
+  const policy={x:W/2,y:mobile?451:465,w:mobile?190:200,h:56};
   const box=(o,cls,title,subtitle)=>`<g class="${cls}"><rect x="${o.x-o.w/2}" y="${o.y-o.h/2}" width="${o.w}" height="${o.h}" rx="9"/><text x="${o.x}" y="${o.y-3}" text-anchor="middle" class="svg-title">${title}</text><text x="${o.x}" y="${o.y+17}" text-anchor="middle" class="svg-small">${subtitle}</text></g>`;
   for(let i=0;i<4;i++){
-   const q=mobile?{x:57+112*i,y:170,w:86,h:57}:{x:340,y:55+106*i,w:116,h:58};
-   const path=mobile?`M ${input.x} ${input.y+27} C ${input.x} 112, ${q.x} 112, ${q.x} ${q.y-28}`:`M ${input.x+75} ${input.y} C 250 ${input.y},250 ${q.y},${q.x-58} ${q.y}`;
-   const gate=mobile?{x:q.x,y:254}:{x:490,y:q.y};
-   const out=mobile?`M ${q.x} ${q.y+29} L ${gate.x} ${gate.y} C ${gate.x} 300,${sum.x} 295,${sum.x} ${sum.y-27}`:`M ${q.x+58} ${q.y} L ${gate.x} ${gate.y} C 570 ${gate.y},570 ${sum.y},${sum.x-78} ${sum.y}`;
+   const q={x:W*(i+.5)/4,y:mobile?170:185,w:mobile?94:156,h:64};
+   const path=`M ${input.x} ${input.y+29} C ${input.x} 110, ${q.x} 110, ${q.x} ${q.y-32}`;
+   const gate={x:q.x,y:mobile?255:278};
+   const out=`M ${q.x} ${q.y+32} L ${gate.x} ${gate.y} C ${gate.x} ${sum.y-42},${sum.x} ${sum.y-42},${sum.x} ${sum.y-29}`;
    html+=`<path id="supervise-${i}" class="supervision-path" d="${path}"/><path id="extract-${i}" class="extraction-path ${active.includes(i)?'selected':''}" d="${out}"/>`;
    html+=box(q,'value-node',`Q${'₁₂₃₄'[i]}`,'TD target + loss');
    html+=`<g class="weight-gate ${active.includes(i)?'selected':''}"><circle cx="${gate.x}" cy="${gate.y}" r="18"/><text x="${gate.x}" y="${gate.y+5}" text-anchor="middle">${active.includes(i)?'×1':'×0'}</text></g>`;
   }
-  const finalPath=mobile?`M ${sum.x} ${sum.y+27} L ${policy.x} ${policy.y-25}`:`M ${sum.x+78} ${sum.y} L ${policy.x-65} ${policy.y}`;
+  const finalPath=`M ${sum.x} ${sum.y+29} L ${policy.x} ${policy.y-28}`;
   html+=`<path id="policy-path" class="extraction-path selected" d="${finalPath}"/>`;
   html+=box(input,'input-node','Replay transition','(s, a, s′) + subgoal labels');
   html+=box(sum,'sum-node','Aggregate value','sum of selected Q-values');
   html+=box(policy,'policy-node','Policy update','π(a | s)');
-  if(!mobile)html+='<text x="340" y="417" text-anchor="middle" class="svg-small">Shared critic parameters</text><text x="490" y="417" text-anchor="middle" class="svg-small">Extraction weights</text>';
+  html+=`<text x="${W/2}" y="${mobile?125:133}" text-anchor="middle" class="svg-small">Shared critic parameters · subgoals ordered left to right</text>`;
   svg.innerHTML=html;
   svg.querySelectorAll('text').forEach(t=>{
    const label=t.textContent;let tex=null;

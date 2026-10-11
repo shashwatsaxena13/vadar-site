@@ -38,3 +38,24 @@
 .results-rollouts{max-width:1120px;margin:24px auto 32px;border:1px solid var(--line);border-radius:8px;background:#fff}.results-rollouts>summary{cursor:pointer;padding:16px 20px;font-size:15px;font-weight:500;color:var(--ink)}.results-rollouts>summary:focus-visible{outline:3px solid #286cbe;outline-offset:3px}.results-rollouts .policy-gallery{margin:0;padding:0 18px 18px;max-width:none}.results-rollouts[open]>summary{margin-bottom:6px}@media(max-width:700px){.results-rollouts .policy-gallery{padding:0 12px 12px}}
 
 #implicit-bellman .bellman-figure{max-width:380px;margin:30px auto}.bellman-figure img{width:100%;height:auto}#implicit-bellman .equation{font-size:clamp(15px,2vw,23px)}
+
+/* Keep temporal order consistent between subgoal cards and critic values. */
+#weighting-demo .goal{padding:9px 6px}
+#weighting-demo .goal .q{font-size:27px}
+#weighting-demo .goal strong{font-size:16px;margin-top:5px}
+#weighting-demo .goal .state{font-size:13px;margin-top:5px}
+#weighting-demo .goal .weight{font-size:16px;margin-top:4px}
+#weighting-svg .svg-title{font-size:19px}
+#weighting-svg .svg-small{font-size:12px}
+#weighting-svg .svg-math{font-size:22px}
+#weighting-svg .svg-math.small{font-size:12px}
+#weighting-svg .svg-math.gate{font-size:16px}
+@media(max-width:580px){
+ #weighting-demo .goal strong{font-size:12px}
+ #weighting-demo .goal .state{font-size:11px}
+ #weighting-demo .goal .q{font-size:23px}
+ #weighting-demo .goal .weight{font-size:14px}
+ #weighting-svg .svg-title{font-size:17px}
+ #weighting-svg .svg-small{font-size:10px}
+ #weighting-svg .svg-math.small{font-size:10px}
+}
