@@ -57,7 +57,7 @@
 <a href="#critic">
       Critic quality
      </a>
-<a href="#multi-objective">
+<a href="#implicit-bellman">Implicit backup</a><a href="#multi-objective">
       Multi-objective learning
      </a>
 <a href="#cite">
@@ -548,7 +548,6 @@
       VaDar improves learning on long-horizon manipulation tasks.
      </h2>
 </div>
-
 <figure class="wide-figure">
 <a aria-label="Open the full benchmark results" href="assets/results.png" rel="noopener" target="_blank">
 <img alt="Paper learning curves comparing VaDar, goal-conditioned approaches, dense rewards, and sparse rewards across RoboCasa, Robomimic, LIBERO, and OGBench." height="1093" loading="lazy" src="assets/results.png" width="2200"/>
@@ -765,11 +764,18 @@
      </p>
 </div>
 </section>
-<section class="section" id="multi-objective">
+<section class="section" id="implicit-bellman">
+<div class="reading"><p class="eyebrow">07 / Implicit Bellman backup</p><h2>An implicit Bellman-backup view of dense critic supervision.</h2></div>
+<figure class="wide-figure bellman-figure"><a aria-label="Enlarge the implicit Bellman backup diagram" href="assets/implicit-bellman.png" rel="noopener" target="_blank"><img alt="One state-action transition supervises several subgoal predictions; their TD losses update the same shared critic representation." height="816" loading="lazy" src="assets/implicit-bellman.png" width="792"/></a><figcaption>All-subgoal TD targets update shared critic representations.</figcaption></figure>
 <div class="reading">
-<p class="eyebrow">
-      07 / Multi-objective learning
-     </p>
+<p>The frozen-policy experiments show that subgoal supervision improves action selection independently of policy updates. Together with Last-Q, they motivate a further question: how can intermediate subgoal targets improve value predictions for the final task?</p>
+<p>With sparse final-task rewards, one-step TD learning propagates the reward signal backward through successive bootstrapped targets. For a fixed policy, the classical Bellman recursion is</p>
+<div aria-label="The Bellman recursion" class="equation" data-tex="Q^\pi(s,a)=r(s,a)+\gamma\,\mathbb{E}_{s',a'}[Q^\pi(s',a')]"></div>
+<p>VaDar supervises every subgoal value at each sampled transition. These targets span multiple temporal resolutions: a state far from task completion may already be close to an intermediate subgoal. Predicting these nearer outcomes can train useful features before the final-task value is accurate. Because the predictions share network parameters, those features are also available to the final-subgoal prediction.</p>
+<p>We hypothesize that this transfer helps the critic learn dependencies across stages of the task, and refer to it as an <em>implicit Bellman backup</em>. Last-Q and frozen-policy steering are consistent with this interpretation; they do not establish additional Bellman backups within a forward pass or a guaranteed reduction in TD updates. <a href="assets/vadar-paper.pdf">Section 6.4 of the paper</a> develops this explanation.</p>
+</div></section><section class="section" id="multi-objective">
+<div class="reading">
+<p class="eyebrow">08 / Multi-objective learning</p>
 <h2>
       Value disaggregation also supports multi-objective learning.
      </h2>
@@ -841,9 +847,7 @@
 </section>
 <section class="section" id="scope">
 <div class="reading">
-<p class="eyebrow">
-      08 / Scope and open questions
-     </p>
+<p class="eyebrow">09 / Scope and open questions</p>
 <h2>
       Extensions beyond sequential subgoals.
      </h2>
