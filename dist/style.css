@@ -63,9 +63,8 @@
 .replay-demo .prediction-kind{font-size:12px}
 .replay-demo .prediction-goal{font-size:14px}
 
-.hero .affiliations,.hero .funding-note{font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
-.hero .affiliations{margin:0 0 5px}
+.hero .affiliations{font-size:13px;line-height:1.5;color:var(--muted);text-align:center;margin:0 0 20px}
 .hero .affiliations span{white-space:nowrap}
-.hero .funding-note{margin:0 0 20px}
+.hero .affiliations .funding-note{font:inherit;color:inherit;letter-spacing:inherit;white-space:normal}
 
 footer{flex-wrap:wrap}
