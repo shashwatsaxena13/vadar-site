@@ -201,17 +201,17 @@
         </a>
         .
        </video><label class="video-speed-label">Playback speed <select id="rollout-speed"><option value="1">1×</option><option selected="" value="2">2×</option><option value="4">4×</option></select></label>
-<figcaption id="rollout-caption">In the RoboCasa PreSoakPan task, the robot must place a pan in the sink and leave a sponge inside it. Here it places the pan but fails to leave the sponge stably inside. This rollout is from the paper presentation.</figcaption>
+<figcaption id="rollout-caption">Myopic failure on the RoboCasa PreSoakPan task. The pan is dropped into the sink in a position that does not permit a stable placement of the sponge on top of it.</figcaption>
 </figure>
 </div>
 </div>
 <div class="reading">
-<p>The ArrangeTea task in the RoboCasa suite requires placing a kettle and a mug on a tray, then closing the cabinet. In the rollout above, the robot completes the kettle-placement subgoal but leaves too little room for the mug. When it tries to place the mug, the collision knocks the kettle off the counter.</p>
-<p>The kettle-placement reward counts this placement as a success even though it obstructs the mug. A policy trained only to maximize the current-subgoal value has no incentive to leave room for the next step.</p>
+<p>The ArrangeTea task in the RoboCasa suite requires placing a kettle and a mug on a tray, then closing the cabinet. In the rollout above, the policy places the kettle on the tray in a position that obstructs the subsequent mug placement. The “placing the kettle” subgoal is complete, but attempting to place the mug causes a collision that knocks the kettle off the counter.</p>
+<p>Both implicit and explicit hierarchical goal conditioning run into a common failure mode: <em>overly myopic policy exploitation</em>. Both methods update the policy against the critic of the currently active subgoal alone. As a result, the policy is rewarded for completing the current subgoal without accounting for how its manner of completion affects subsequent subtasks.</p>
 </div>
 <div class="reading">
-<p>Implicit hierarchical goal conditioning trains a policy without a goal input, but still optimizes the value of the current subgoal. It therefore remains susceptible to the same myopic behavior.</p>
-<p>VaDar trains the policy using future-subgoal values. An accurate mug-placement value can favor kettle placements that leave room on the tray. Learning that value, however, requires assigning credit to actions taken well before the mug-placement reward.</p>
+<p>Implicit hierarchical goal conditioning retains goal-conditioned critics but uses a subgoal-independent policy, removing the need for test-time goal information.</p>
+<p>The policy does not distinguish between <em>merely completing the current subgoal</em> and <em>completing it in a way that facilitates future subgoals</em>. Our method, VaDar, addresses this limitation by optimizing the policy for future-subgoal values, providing a learning signal for actions that enable progress toward full-task completion rather than just myopically completing the current subtask.</p>
 </div>
 </section>
 <section class="section tinted" id="insight">
