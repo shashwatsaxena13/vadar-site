@@ -63,4 +63,6 @@
 .replay-demo .prediction-kind{font-size:12px}
 .replay-demo .prediction-goal{font-size:14px}
 
-.hero .funding-note{font-size:13px;line-height:1.5;color:var(--muted);margin:12px 0 20px}
+footer .funding-note{font-size:13px;line-height:1.5;color:var(--muted);margin:20px 0 0;flex-basis:100%;width:100%;text-align:center}
+
+footer{flex-wrap:wrap}
